@@ -1,7 +1,12 @@
 const rp = require('request-promise');
 const $ = require('cheerio');
-const nhlParse = require('./nhlParse');
 const url = 'https://www.nhl.com/info/teams';
+
+/**
+ * QUESTION
+ * - How to perform simple actions like addition or multiplication when the asset has
+ * - been retrieved? See ** below
+ */
 
 rp(url)
   .then(function(html) {
@@ -16,13 +21,14 @@ rp(url)
         }
     }
     for (let i = 0; i < nhlUrls.length-1; i++) { // -1 = Vegas incorrect format
-        // go to site and find average weight
+
         rp('https://www.nhl.com' + nhlUrls[i].attribs.href)
             .then(function(html) {
                 // success
 
                 const button = $('#teamSelect', html);
                 console.log(button['0'].children[0].data.trim());
+                const team = button['0'].children[0].data.trim();
 
                 const temp = $('td[class="weight-col fixed-width-font"]', html);
                 let sum = 0;
@@ -36,8 +42,8 @@ rp(url)
             })
             .catch(function(err) {
                 console.log(err);
-            })
-    }
+            });
+    }        
   })
   .catch(function(err) {
     //handle error
